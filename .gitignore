@@ -1,7 +1,11 @@
 # Files that Git should ignore
 
+orig-randall.c1
+orig-Makefile
+notes.txt
 *.data
 *.o
 *.tgz
 *~
 randall
+.DS_Store

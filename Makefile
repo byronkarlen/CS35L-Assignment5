@@ -28,10 +28,12 @@ TAR = tar
 TARFLAGS = --gzip --transform 's,^,randall/,'
 TAREXT = tgz
 
+object-files = options.o output.o rand64-hw.o rand64-sw.o randall.o
+
 default: randall
 
-randall: randall.c
-	$(CC) $(CFLAGS) $@.c -o $@
+randall: *.c
+	$(CC) $(CFLAGS) *.c -o $@
 
 assignment: randall-assignment.$(TAREXT)
 assignment-files = COPYING Makefile randall.c
@@ -49,5 +51,28 @@ repository-tarball:
 
 .PHONY: default clean assignment submission-tarball repository-tarball
 
+check:
+	[ 5 = "$$(./randall 5 | wc -c)" ]
+	[ 10 = "$$(./randall 10 | wc -c)" ]
+	[ 0 = "$$(./randall 0 | wc -c)" ]
 clean:
 	rm -f *.o *.$(TAREXT) randall
+
+
+
+# randall: $(object-files)
+# 	$(CC) $(CFLAGS) $(object-files) -o $@
+
+# options.o: options.c options.h
+# 	$(cc) -c options.c
+
+# output.o: output.c output.h
+# 	$(cc) -c output.c
+
+# rand64-hw.o: rand64-hw.c rand64-hw.h
+# 	$(cc) -c rand64-hw.c
+
+# rand64-sw.o: rand64-sw.c rand64-sw.h
+# 	$(cc) -c rand64-sw.o
+
+# randall.o: randall.c # and others
