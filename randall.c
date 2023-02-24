@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <limits.h>
+#include <string.h>
 
 #include "output.h"
 #include "rand64-hw.h"
@@ -41,8 +42,34 @@
 int main (int argc, char **argv){
   /* Check arguments.  */
   long long nbytes;
-  if(parseArguments(argc, argv, &nbytes))
+
+  char* inputParam = NULL;
+  char* outputParam = NULL;
+  if(parseArguments(argc, argv, &nbytes, inputParam, outputParam)){
+    fprintf(stderr, "%s: usage: %s NBYTES [-i <arg>] [-o <arg>]\n", "randall", "randall");
     return 1;
+  }
+  /* gather the correct command-line arguments */
+  if(inputParam != NULL){ //If an inputParam was correctly supplied
+    if(strcmp(inputParam, "rdrand") == 0){
+      printf("input parameter: rdrand");
+    }
+    else if(strcmp(inputParam,"mrand48_r") == 0){
+      printf("input parameter: mrand48_r");
+    }
+    else{ //inputParam is a filename
+      printf("input parameter is this filename: " + *inputParam);
+    } 
+  }
+  if(outputParam != NULL){
+    if(strcmp(outputParam,"stdio") == 0){
+      printf("output parameter: stdio");
+    }
+    else{ //inputParam is a number
+      printf("output paramter is this number: " + *outputParam);
+    } 
+  }
+  printf("number of bytes: %lld", nbytes);
 
   /* If there's no work to do, don't worry about which library to use.  */
   if (nbytes == 0)
@@ -89,5 +116,6 @@ int main (int argc, char **argv){
   }
 
   finalize ();
+
   return !!output_errno;
 }
