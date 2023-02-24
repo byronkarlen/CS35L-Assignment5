@@ -43,33 +43,48 @@ int main (int argc, char **argv){
   /* Check arguments.  */
   long long nbytes;
 
-  char* inputParam = NULL;
-  char* outputParam = NULL;
+  char inputParam = NULL;
+  char outputParam = NULL;
+
+  int inputKey = 0; //1 if input is "rdrand", 2 if "mrand48_r", 3 if "filename"
+  int outputKey = 0; //1 if output is stdio, 2 if a number
+  long int N = -1;
+
   if(parseArguments(argc, argv, &nbytes, inputParam, outputParam)){
     fprintf(stderr, "%s: usage: %s NBYTES [-i <arg>] [-o <arg>]\n", "randall", "randall");
     return 1;
   }
+
   /* gather the correct command-line arguments */
   if(inputParam != NULL){ //If an inputParam was correctly supplied
     if(strcmp(inputParam, "rdrand") == 0){
-      printf("input parameter: rdrand");
+      inputKey = 1; 
+      printf("input parameter: rdrand\n");
     }
     else if(strcmp(inputParam,"mrand48_r") == 0){
-      printf("input parameter: mrand48_r");
+      inputKey = 2; 
+      printf("input parameter: mrand48_r\n");
     }
     else{ //inputParam is a filename
-      printf("input parameter is this filename: " + *inputParam);
+      inputKey = 3;
+      printf("input parameter is this filename: %s\n", inputParam);
     } 
   }
   if(outputParam != NULL){
     if(strcmp(outputParam,"stdio") == 0){
-      printf("output parameter: stdio");
+      outputKey = 1; 
+      printf("output parameter: stdio\n");
     }
     else{ //inputParam is a number
-      printf("output paramter is this number: " + *outputParam);
+      outputKey = 2; 
+      char *endptr;
+      N = strtol(outputParam, &endptr, 10);
+      printf("output parameter is this number: %ld\n" + N);
     } 
   }
-  printf("number of bytes: %lld", nbytes);
+  printf("number of bytes: %lld\n", nbytes);
+
+  return 0;
 
   /* If there's no work to do, don't worry about which library to use.  */
   if (nbytes == 0)
@@ -77,27 +92,55 @@ int main (int argc, char **argv){
 
   /* Now that we know we have work to do, arrange to use the
      appropriate library.  */
-  void (*initialize) (void);
-  unsigned long long (*rand64) (void);
+  void (*initialize) (char*);
+  unsigned long long (*rand) (void);
   void (*finalize) (void);
   
   if (rdrand_supported ()){
     initialize = hardware_rand64_init;
-    rand64 = hardware_rand64;
+    rand = hardware_rand64;
     finalize = hardware_rand64_fini;
   }
   else{
-    initialize = software_rand64_init;
-    rand64 = software_rand64;
-    finalize = software_rand64_fini;
+    if(inputKey == 1){ 
+      fprintf(stderr, "rdrand is not supported on this machine.\n");
+    }
+    else if(inputKey == 2){
+      initialize = software_mrand48_r_init;
+      rand = software_mrand48_r;
+      finalize = software_mrand48_r_fini;
+    }
+    else{
+      initialize = software_rand64_init;
+      rand = software_rand64;
+      finalize = software_rand64_fini;
+    }
   }
 
-  initialize ();
-  int wordsize = sizeof rand64 ();
+  // if(inputKey != 3){
+  //   initialize ();
+  // }
+  // else{
+  //   software_rand_init(inputParam); 
+  // }
+
+  char* inputfile = NULL;
+  if(inputKey == 3)
+    inputfile = inputParam;
+  initialize(inputfile);
+
+  int wordsize;
+  if(outputKey == 2){
+    wordsize = N;
+  }
+  else{
+    wordsize = sizeof rand ();
+  }
+  
   int output_errno = 0;
 
   do{
-    unsigned long long x = rand64 ();
+    unsigned long long x = rand ();
     int outbytes = nbytes < wordsize ? nbytes : wordsize;
     if (!writebytes (x, outbytes)){
 	    output_errno = errno;
