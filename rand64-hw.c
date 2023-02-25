@@ -1,5 +1,8 @@
 #include "rand64-hw.h"
 
+#include <cpuid.h>
+#include <immintrin.h> //I don't think this is necessary
+
 /* Description of the current CPU.  */
 struct cpuid { unsigned eax, ebx, ecx, edx; };
 
@@ -22,7 +25,7 @@ _Bool rdrand_supported (void){
 
 /* Initialize the hardware rand64 implementation.  */
 void hardware_rand64_init (char* inputfile){
-
+  if(inputfile != NULL) return;
 }
 
 /* Return a random value, using hardware operations.  */

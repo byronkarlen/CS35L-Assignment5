@@ -2,11 +2,6 @@
 #define OPTIONS_H
 
 #include <stdbool.h>
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
 
 bool isPositiveInteger(char* input);
 

@@ -1,10 +1,16 @@
 #include "options.h"
 
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+
 bool isPositiveInteger(char* input){
     char *endptr;
     errno = 0; 
     long int num = strtol(input, &endptr, 10);
-    if(errno != NULL || *endptr != '\0' || input == endptr || num < 0){
+    if(errno != 0 || *endptr != '\0' || input == endptr || num < 0){
         return false;
     }
     else{
@@ -13,27 +19,35 @@ bool isPositiveInteger(char* input){
 }
 
 int parseArguments(int argc, char **argv, long long *nbytes, char **inputParam, char **outputParam){
-    //bool valid = true;
-
-    bool optionI = false;
-    bool optionO = false;
+    int numargs = argc;
+    bool optionI = 0;
+    bool optionO = 0;
 
     int c; 
     while((c = getopt(argc, argv, "i:o:")) != -1){
         switch(c){
             case 'i':
+                optionI = 1;
                 if(optarg){
                     *inputParam = strdup(optarg);
-                    optionI = true;
+                    if(*inputParam == NULL){
+                        return 1;
+                    }
                 }
                 break;
             case 'o':
+                optionO = 1;
                 if(optarg){
                     *outputParam = strdup(optarg);
-                    optionO = true;
+                    if(*outputParam == NULL){
+                        return 1;
+                    }                    
                 }
                 break;
         }
+    }
+    if(numargs != optionI*2 + optionO*2 + 2){ //if an option is missing a corresponding parameter
+        return 1; 
     }
     if(optionI){
         if(*inputParam != NULL){
@@ -47,7 +61,7 @@ int parseArguments(int argc, char **argv, long long *nbytes, char **inputParam, 
     }
     if(optionO){
         if(*outputParam != NULL){
-            if(strcmp(*outputParam, "stdio") && isPositiveInteger(*outputParam)){
+            if(strcmp(*outputParam, "stdio") && !isPositiveInteger(*outputParam)){
                 return 1;
             }
         }
@@ -77,3 +91,4 @@ int parseArguments(int argc, char **argv, long long *nbytes, char **inputParam, 
     
     return 0;
 }
+ 

@@ -1,10 +1,6 @@
 #ifndef RAND64_HW_H
 #define RAND64_HW_H
 
-#include <stdbool.h>
-#include <cpuid.h>
-#include <immintrin.h>
-
 struct cpuid cpuid (unsigned int leaf, unsigned int subleaf);
 
 _Bool rdrand_supported (void);

@@ -1,5 +1,8 @@
 #include "rand64-sw.h"
 
+#include <stdlib.h>
+#include <time.h>
+
 /* Input stream containing random bytes.  */
 static FILE *urandstream;
 
@@ -35,7 +38,14 @@ void software_mrand48_r_init (char* inputfile){
 }
 
 unsigned long long software_mrand48_r (void){
-  return -1;
+  struct drand48_data buffer;
+    srand48_r(time(NULL), &buffer);
+
+    // Generate a random number
+    long int result;
+    int ret = mrand48_r(&buffer, &result);
+
+    return result;
 }
 
 void software_mrand48_r_fini (void){

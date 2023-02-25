@@ -30,35 +30,7 @@ TAREXT = tgz
 
 object-files = options.o output.o rand64-hw.o rand64-sw.o randall.o
 
-default: randall
-
-randall: *.c
-	$(CC) $(CFLAGS) *.c -o $@
-
-assignment: randall-assignment.$(TAREXT)
-assignment-files = COPYING Makefile randall.c
-randall-assignment.$(TAREXT): $(assignment-files)
-	$(TAR) $(TARFLAGS) -cf $@ $(assignment-files)
-
-submission-tarball: randall-submission.$(TAREXT)
-submission-files = $(assignment-files) \
-  notes.txt # More files should be listed here, as needed.
-randall-submission.$(TAREXT): $(submission-files)
-	$(TAR) $(TARFLAGS) -cf $@ $(submission-files)
-
-repository-tarball:
-	$(TAR) -czf randall-git.tgz .git
-
-.PHONY: default clean assignment submission-tarball repository-tarball
-
-check:
-	[ 5 = "$$(./randall 5 | wc -c)" ]
-	[ 10 = "$$(./randall 10 | wc -c)" ]
-	[ 0 = "$$(./randall 0 | wc -c)" ]
-clean:
-	rm -f *.o *.$(TAREXT) randall
-
-
+# default: randall
 
 # randall: $(object-files)
 # 	$(CC) $(CFLAGS) $(object-files) -o $@
@@ -73,6 +45,33 @@ clean:
 # 	$(cc) -c rand64-hw.c
 
 # rand64-sw.o: rand64-sw.c rand64-sw.h
-# 	$(cc) -c rand64-sw.o
+# 	$(cc) -c rand64-sw.c
 
-# randall.o: randall.c # and others
+# randall.o: randall.c 
+# 	$(cc) -c randall.c
+
+randall: *.c
+	$(CC) $(CFLAGS) *.c -o $@
+
+assignment: randall-assignment.$(TAREXT)
+assignment-files = COPYING Makefile randall.c 
+randall-assignment.$(TAREXT): $(assignment-files)
+	$(TAR) $(TARFLAGS) -cf $@ $(assignment-files)
+
+submission-tarball: randall-submission.$(TAREXT)
+submission-files = $(assignment-files) \
+  notes.txt options.c options.h rand64-hw.c rand64-hw.h rand64-sw.h rand64-sw.c output.h output.c
+randall-submission.$(TAREXT): $(submission-files)
+	$(TAR) $(TARFLAGS) -cf $@ $(submission-files)
+
+repository-tarball:
+	$(TAR) -czf randall-git.tgz .git
+
+.PHONY: default clean assignment submission-tarball repository-tarball
+
+check:
+	[ 5 = "$$(./randall 5 | wc -c)" ]
+	[ 10 = "$$(./randall 10 | wc -c)" ]
+	[ 0 = "$$(./randall 0 | wc -c)" ]
+clean:
+	rm -f *.o *.$(TAREXT) randall
