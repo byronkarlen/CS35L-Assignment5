@@ -8,8 +8,8 @@
 #include <unistd.h>
 #include <string.h>
 
-bool isInteger(char* input);
+bool isPositiveInteger(char* input);
 
-int parseArguments(int argc, char **argv, long long *nbytes, char *inputParam, char *outputParam);
+int parseArguments(int argc, char **argv, long long *nbytes, char **inputParam, char **outputParam);
 
 #endif

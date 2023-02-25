@@ -37,21 +37,25 @@
 #include "rand64-sw.h"
 #include "options.h"
 
-
+void deallocateMemory(char* i, char* o){
+  free(i);
+  free(o);
+}
 /* Main program, which outputs N bytes of random data.  */
 int main (int argc, char **argv){
   /* Check arguments.  */
   long long nbytes;
 
-  char inputParam = NULL;
-  char outputParam = NULL;
+  char *inputParam = NULL;
+  char *outputParam = NULL;
 
   int inputKey = 0; //1 if input is "rdrand", 2 if "mrand48_r", 3 if "filename"
   int outputKey = 0; //1 if output is stdio, 2 if a number
   long int N = -1;
 
-  if(parseArguments(argc, argv, &nbytes, inputParam, outputParam)){
+  if(parseArguments(argc, argv, &nbytes, &inputParam, &outputParam)){
     fprintf(stderr, "%s: usage: %s NBYTES [-i <arg>] [-o <arg>]\n", "randall", "randall");
+    deallocateMemory(inputParam, outputParam);
     return 1;
   }
 
@@ -84,11 +88,14 @@ int main (int argc, char **argv){
   }
   printf("number of bytes: %lld\n", nbytes);
 
+  deallocateMemory(inputParam, outputParam);
   return 0;
 
   /* If there's no work to do, don't worry about which library to use.  */
-  if (nbytes == 0)
+  if (nbytes == 0){
+    deallocateMemory(inputParam, outputParam);
     return 0;
+  }
 
   /* Now that we know we have work to do, arrange to use the
      appropriate library.  */
@@ -116,13 +123,6 @@ int main (int argc, char **argv){
       finalize = software_rand64_fini;
     }
   }
-
-  // if(inputKey != 3){
-  //   initialize ();
-  // }
-  // else{
-  //   software_rand_init(inputParam); 
-  // }
 
   char* inputfile = NULL;
   if(inputKey == 3)
@@ -160,5 +160,6 @@ int main (int argc, char **argv){
 
   finalize ();
 
+  deallocateMemory(inputParam, outputParam);
   return !!output_errno;
 }
