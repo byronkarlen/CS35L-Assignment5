@@ -1,0 +1,72 @@
+Assignment 5 Notes
+
+Steps I took while doing the assignment: 
+    1) I unpacked the tarball and used $ git log and $ git restore ... to recover the source code 
+       I needed
+    2) I added this file (notes.txt) to the repository 
+    3) I modified the Makefile so that the command 'make check' tests my program 
+        a) I used shell commands of the form: [ 5 = "$$(./randall 5 | wc -c)" ] to test my randall 
+           executable
+    4) I read all the source code and divided it up into 4 modules as the spec instructed
+        a) At this point I now have 9 .c or .h files, and my options.c and options.h files are empty
+        b) I got rid of the 'static' keyword in front of functions to change their scope so that 
+           randall.c could still call them. 
+        c) I modified the Makefile so that the "recipe" was just the following: 
+           $(CC) $(CFLAGS) *.c -o $@
+           Although I know this command is inefficient and ruins the purpose of a Makefile, because 
+           we are only using a very limited amount of source files, it just kept things simple to 
+           recompile and link each one after making a change to any one of them. 
+    5) I implemented the options.c and options.h modules
+        a) I created a function called parseArguments() that takes in the following: 
+           int argc, char **argv, long long *nbytes, char **inputParam, char **outputParam
+           - This function returns 0 if there was an error in the format of the command-line 
+             options, and 1 otherwise
+           - I use the getopt() function to parse my arguments, and I use strdup() to set 
+             *inputParam and *outputParam to the values followed by the -i and -o options, 
+             respectively. Because I allocated memory here, I created a function above main() 
+             called deallocateMemory() that always deallocates this memory before returning. 
+    6) I added the implementation for random-number generation based on mrand48_r
+        a) did this simply in the rand64-sw.c module just to keep things simple 
+        b) I also added initialize() and finalize() functions to keep my main() working, 
+           but they do nothing. 
+        c) I looked up how to call this function on stackoverflow. 
+    7) I implemented the functionality of main() depending on which options (or lack of options) 
+       were specified
+        a) All I did was change the assignments of init, rand, and finalize depending on which 
+           options were specified
+        b) I made the init funciton take in a char* as a parameter (which most of the functions 
+           don't use) except it is useful for when the user specifies a file to read random data
+    8) I reorganized all of my #include statements and got rid of redundant ones – this took some 
+       trial and error
+    9) Finally, I adjusted my Makefile so that it the various "targets" had the correct "recipes" 
+       given the numerous files I added. 
+    10) I timed my implementation
+
+Additional notes: 
+    - I was not super good at committing every time I added a working functionality because 
+      often I committed something that I though worked and then later realized it didn't. 
+      I tried to commit after roughly every one of these steps though. 
+
+
+
+Timing my implementation: 
+
+time dd if=/dev/urandom ibs=8192 obs=8192 count=16384 >/dev/null
+    real    0m0.919s
+    user    0m0.022s
+    sys     0m0.893s
+
+time ./randall 133562368 >/dev/null
+    real    0m3.907s
+    user    0m3.874s
+    sys     0m0.017s
+
+time ./randall 133562368 | cat >/dev/null
+    real    0m4.033s
+    user    0m3.912s
+    sys     0m0.268s
+
+time ./randall 133562368 >rand.data
+    real    0m4.012s
+    user    0m3.877s
+    sys     0m0.093s

@@ -2,7 +2,6 @@
 
 orig-randall.c1
 orig-Makefile
-notes.txt
 *.data
 *.o
 *.tgz
