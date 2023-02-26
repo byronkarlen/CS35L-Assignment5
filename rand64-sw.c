@@ -1,6 +1,7 @@
 #include "rand64-sw.h"
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <time.h>
 
 /* Input stream containing random bytes.  */
@@ -44,6 +45,9 @@ unsigned long long software_mrand48_r (void){
     // Generate a random number
     long int result;
     int ret = mrand48_r(&buffer, &result);
+    if(ret){
+      abort();
+    }
 
     return result;
 }

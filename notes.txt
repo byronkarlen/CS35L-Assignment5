@@ -29,7 +29,9 @@ Steps I took while doing the assignment:
         a) did this simply in the rand64-sw.c module just to keep things simple 
         b) I also added initialize() and finalize() functions to keep my main() working, 
            but they do nothing. 
-        c) I looked up how to call this function on stackoverflow. 
+        c) I looked up how to call this function on stackoverflow – I had to use include 
+           <time.h> so that I could seed my random number generator with the current time. 
+           I recognize though that this might make my program not thread-safe. 
     7) I implemented the functionality of main() depending on which options (or lack of options) 
        were specified
         a) All I did was change the assignments of init, rand, and finalize depending on which 

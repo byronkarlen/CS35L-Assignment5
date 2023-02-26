@@ -51,7 +51,8 @@ int parseArguments(int argc, char **argv, long long *nbytes, char **inputParam, 
     }
     if(optionI){
         if(*inputParam != NULL){
-            if(strcmp(*inputParam, "rdrand") && strcmp(*inputParam, "mrand48_r") && (*inputParam)[0] != '/'){
+            if(strcmp(*inputParam, "rdrand") && strcmp(*inputParam, "mrand48_r") && 
+            (*inputParam)[0] != '/'){
                 return 1;
             }
         }

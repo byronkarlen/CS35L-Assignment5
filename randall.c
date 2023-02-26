@@ -36,6 +36,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <errno.h>
+#include <stdlib.h>
 
 #include "output.h"
 #include "rand64-hw.h"
@@ -119,7 +120,7 @@ int main (int argc, char **argv){
       fprintf(stderr, "rdrand is not supported on this machine\n");
       return 1;
     }
-  }
+  } 
   else if(inputKey == 2){
     initialize = software_mrand48_r_init;
     rand = software_mrand48_r;

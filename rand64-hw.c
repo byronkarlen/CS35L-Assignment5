@@ -1,7 +1,7 @@
 #include "rand64-hw.h"
 
 #include <cpuid.h>
-#include <immintrin.h> //I don't think this is necessary
+#include <immintrin.h> 
 
 /* Description of the current CPU.  */
 struct cpuid { unsigned eax, ebx, ecx, edx; };
@@ -30,7 +30,7 @@ void hardware_rand64_init (char* inputfile){
 
 /* Return a random value, using hardware operations.  */
 unsigned long long hardware_rand64 (void){
-  unsigned long long int x;
+  unsigned long long x;
 
   /* Work around GCC bug 107565
      <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=107565>.  */

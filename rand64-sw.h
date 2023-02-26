@@ -1,10 +1,6 @@
 #ifndef RAND64_SW_H
 #define RAND64_SW_H
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
-
 void software_rand64_init (char*);
 
 unsigned long long software_rand64 (void);
