@@ -30,28 +30,26 @@ TAREXT = tgz
 
 object-files = options.o output.o rand64-hw.o rand64-sw.o randall.o
 
-# default: randall
 
-# randall: $(object-files)
-# 	$(CC) $(CFLAGS) $(object-files) -o $@
+default: randall
 
-# options.o: options.c options.h
-# 	$(cc) -c options.c
+randall: $(object-files)
+	$(CC) $(CFLAGS) $(object-files) -o $@
 
-# output.o: output.c output.h
-# 	$(cc) -c output.c
+options.o: options.c options.h
+	$(CC) $(CFLAGS) -c options.c
 
-# rand64-hw.o: rand64-hw.c rand64-hw.h
-# 	$(cc) -c rand64-hw.c
+output.o: output.c output.h
+	$(CC) $(CFLAGS) -c output.c
 
-# rand64-sw.o: rand64-sw.c rand64-sw.h
-# 	$(cc) -c rand64-sw.c
+rand64-hw.o: rand64-hw.c rand64-hw.h
+	$(CC) $(CFLAGS) -c rand64-hw.c
 
-# randall.o: randall.c 
-# 	$(cc) -c randall.c
+rand64-sw.o: rand64-sw.c rand64-sw.h
+	$(CC) $(CFLAGS) -c rand64-sw.c
 
-randall: *.c
-	$(CC) $(CFLAGS) *.c -o $@
+randall.o: randall.c 
+	$(CC) $(CFLAGS) -c randall.c
 
 assignment: randall-assignment.$(TAREXT)
 assignment-files = COPYING Makefile randall.c 
